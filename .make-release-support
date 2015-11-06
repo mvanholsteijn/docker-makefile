@@ -1,0 +1,46 @@
+
+
+function hasChanges() {
+	test -n "$(git status -s)" 
+}
+
+function tagExists() {
+	version=${1:-$(<.release)}
+	test -n "$(git tag | grep "$version\$")"
+}
+
+function differsFromRelease() {
+	version=${1:-$(<.release)}
+	! tagExists $version || test -n "$(git diff --shortstat -r $version)" 
+}
+
+function getVersion() {
+	if hasChanges || differsFromRelease ; then
+		git describe --tag --long
+	else
+		cat .release
+	fi
+}
+
+function nextPatchLevel() {
+	version=${1:-$(<.release)}
+	major_and_minor=$(echo $version | cut -d. -f1,2)
+	patch=$(echo $version | cut -d. -f3)
+	version=$(printf "%s.%d" $major_and_minor $(($patch + 1))) 
+	echo $version
+}
+
+function nextMinorLevel() { 
+	version=${1:-$(<.release)}
+	major=$(echo $version | cut -d. -f1);
+	minor=$(echo $version | cut -d. -f2); 
+	version=$(printf "%d.%d.0" $major $(($minor + 1))) ; 
+	echo $version 
+}
+
+function nextMajorLevel() { 
+	version=${1:-$(<.release)}
+	major=$(echo $version | cut -d. -f1);
+	version=$(printf "%d.0.0" $(($major + 1))) 
+	echo $version
+}
