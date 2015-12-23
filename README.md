@@ -13,7 +13,7 @@ The Makefile has the following targets:
 make patch-release	increments the patch release level
 make minor-release	increments the minor release level and sets patch level to 0
 make major-release	increments the major release level and sets both minor and patch level to 0
-make build		builds a new version of your Docker image and tags it
+make build              builds a new version of your Docker image and tags it
 make check-status	will check whether there are outstanding changes
 make check-release	will check whether the current directory matches the tagged release in git.
 make showver		will show the current release tag based on the directory content.
