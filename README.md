@@ -66,7 +66,7 @@ The name of the git tag is kept in the same file, and by default will have the f
 
 	tag=<directory-name>.<minor>.<patch>
 
-This will allow you to have track and tag mulitple images in a single Git repository.
+This will allow you to have track and tag multiple images in a single Git repository.
 
 If you want to use a different tag prefix, change it in the .release.
 
@@ -96,21 +96,23 @@ The tag is has the following format:
 If you want to maintain multiple docker images in a single git repository, you can use an alternate setup where the Makefile is located in a  silbing directory.
 
 ```
-├── (multiple-example)
-│   ├── [image1](multiple-example/image1)
-│   │   ├── [.release](multiple-example/image1/.release)
-│   │   ├── [Dockerfile](multiple-example/image1/Dockerfile)
-│   │   └── [Makefile](multiple-example/image1/Makefile)
-│   ├── [image2](multiple-example/image2)
-│   │   ├── [.release](multiple-example/image2/.release)
-│   │   ├── [Dockerfile](multiple-example/image2/Dockerfile)
-│   │   └── [Makefile](multiple-example/image2/Makefile)
+├── multiple-example
 │   ├── ...
-│   └── [make](multiple-example/make)
-│       ├── [.make-release-support](multiple-example/make/.make-release-support)
-│       └── [Makefile](multiple-example/make/Makefile)
+│   ├── image1
+│   │   ├── .release
+│   │   ├── Dockerfile
+│   │   └── Makefile
+│   ├── image2
+│   │   ├── .release
+│   │   ├── Dockerfile
+│   │   └── Makefile
+│   └── make
+│       ├── .make-release-support
+│       ├── Makefile
+│       └── install
 ```
-The image directories will include the generic Makefile. In this Makefile you can alter the names and tailor the build by adding pre and post build targets.
+
+The image directories will include the generic Makefile. In this Makefile you can alter the names and tailor the build by adding pre and post build targets.  Checkout the directory (multiple-example) for an example.
 
 
 
@@ -123,7 +125,8 @@ mkdir make
 cd make
 wget  https://raw.githubusercontent.com/mvanholsteijn/docker-makefile/master/Makefile  
 wget  https://raw.githubusercontent.com/mvanholsteijn/docker-makefile/master/.make-release-support
-sed -i ""  -e 's/^RELEASE_SUPPORT=.*/RELEASE_SUPPORT=..\/make\/.make-release-support/' Makefil``
+sed -i ""  -e 's/^RELEASE_SUPPORT=.*/RELEASE_SUPPORT=..\/make\/.make-release-support/' Makefile
+```
 
 ### Create docker image directory
 For each docker images, you create a sibling directory:
@@ -143,6 +146,7 @@ pre-build:
 post-build:
 	@echo do some stuff after the docker build
 !
+
 ```
 
 Now you can use the make build and release instructions to build these images.
