@@ -1,0 +1,4 @@
+#!/bin/bash
+sed -e 's/^RELEASE_SUPPORT=.*/RELEASE_SUPPORT=..\/make\/.make-release-support/' ../../Makefile > Makefile
+ln -sf ../../.make-release-support .
+
