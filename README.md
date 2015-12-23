@@ -10,9 +10,10 @@ To resolve these to issues, I created a generic Makefile that allows you to buil
 
 The Makefile has the following targets:
 ```
-make patch-release	increments the patch release level
-make minor-release	increments the minor release level and sets patch level to 0
-make major-release	increments the major release level and sets both minor and patch level to 0
+make patch-release	increments the patch release level, build and push to registry
+make minor-release	increments the minor release level, build and push to registry
+make major-release	increments the major release level, build and push to registry
+make release		build the current release and push the image to the registry
 make build              builds a new version of your Docker image and tags it
 make check-status	will check whether there are outstanding changes
 make check-release	will check whether the current directory matches the tagged release in git.
@@ -112,7 +113,7 @@ If you want to maintain multiple docker images in a single git repository, you c
 │       └── install
 ```
 
-The image directories will include the generic Makefile. In this Makefile you can alter the names and tailor the build by adding pre and post build targets.  Checkout the directory (multiple-example) for an example.
+The Makefile in the image directories will include the generic Makefile. In this Makefile you can alter the names and tailor the build by adding pre and post build targets.  Checkout the directory (multiple-example) for an example.
 
 
 
