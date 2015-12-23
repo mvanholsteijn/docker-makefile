@@ -1,5 +1,5 @@
 # Generic Docker Makefile
-When working with the Docker hub, two little things bothered me:
+When working with the Docker hub, two small things bothered me:
 
 1. Waiting for your build to start
 2. No easy control over the tags for the images.
@@ -14,7 +14,7 @@ make patch-release	increments the patch release level, build and push to registr
 make minor-release	increments the minor release level, build and push to registry
 make major-release	increments the major release level, build and push to registry
 make release		build the current release and push the image to the registry
-make build              builds a new version of your Docker image and tags it
+make build		builds a new version of your Docker image and tags it
 make check-status	will check whether there are outstanding changes
 make check-release	will check whether the current directory matches the tagged release in git.
 make showver		will show the current release tag based on the directory content.
