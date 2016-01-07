@@ -16,7 +16,7 @@
 #
 
 function hasChanges() {
-	test -n "$(git status --column -s .)" 
+	test -n "$(git status -s .)" 
 }
 
 function getRelease() {
