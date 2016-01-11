@@ -53,13 +53,13 @@ showver: .release
 	@. $(RELEASE_SUPPORT); getVersion
 
 patch-release: VERSION = $(shell . $(RELEASE_SUPPORT); nextPatchLevel)
-patch-release: tag release
+patch-release: .release tag release
 
 minor-release: VERSION = $(shell . $(RELEASE_SUPPORT); nextMinorLevel)
-minor-release: tag release
+minor-release: .release tag release
 
 major-release: VERSION = $(shell . $(RELEASE_SUPPORT); nextMajorLevel)
-major-release: tag release
+major-release: .release tag release
 
 tag: TAG=$(shell . $(RELEASE_SUPPORT); getTag $(VERSION))
 tag: check-status
@@ -72,6 +72,6 @@ tag: check-status
 check-status:
 	@. $(RELEASE_SUPPORT) ; ! hasChanges || (echo "ERROR: there are still outstanding changes" >&2 && exit 1) ;
 
-check-release:
+check-release: .release
 	@. $(RELEASE_SUPPORT) ; tagExists $(TAG) || (echo "ERROR: version not yet tagged in git. make [minor,major,patch]-release." >&2 && exit 1) ;
 	@. $(RELEASE_SUPPORT) ; ! differsFromRelease $(TAG) || (echo "ERROR: current directory differs from tagged $(TAG). make [minor,major,patch]-release." ; exit 1)
