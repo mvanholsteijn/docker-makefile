@@ -17,7 +17,7 @@ REGISTRY_HOST=docker.io
 USERNAME=$(USER)
 NAME=$(shell basename $(PWD))
 
-RELEASE_SUPPORT=./.make-release-support
+RELEASE_SUPPORT := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))/.make-release-support
 IMAGE=$(REGISTRY_HOST)/$(USERNAME)/$(NAME)
 
 VERSION=$(shell . $(RELEASE_SUPPORT) ; getVersion)
@@ -39,7 +39,7 @@ docker-build: .release
 	docker build -t $(IMAGE):$(VERSION) .
 	docker tag  -f $(IMAGE):$(VERSION) $(IMAGE):latest
 
-.release: 
+.release:
 	@echo "release=0.0.0" > .release
 	@echo "tag=$(NAME)-0.0.0" >> .release
 	@echo INFO: .release created
