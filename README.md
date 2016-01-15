@@ -110,7 +110,6 @@ If you want to maintain multiple docker images in a single git repository, you c
 │   └── make
 │       ├── .make-release-support
 │       ├── Makefile
-│       └── install
 ```
 
 The Makefile in the image directories will include the generic Makefile. In this Makefile you can alter the names and tailor the build by adding pre and post build targets.  Checkout the directory (multiple-example) for an example.
@@ -126,7 +125,6 @@ mkdir make
 cd make
 wget  https://raw.githubusercontent.com/mvanholsteijn/docker-makefile/master/Makefile  
 wget  https://raw.githubusercontent.com/mvanholsteijn/docker-makefile/master/.make-release-support
-sed -i ""  -e 's/^RELEASE_SUPPORT=.*/RELEASE_SUPPORT=..\/make\/.make-release-support/' Makefile
 ```
 
 ### Create docker image directory
