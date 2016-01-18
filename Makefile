@@ -52,13 +52,13 @@ release: check-status check-release build
 showver: .release
 	@. $(RELEASE_SUPPORT); getVersion
 
-patch-release: VERSION = $(shell . $(RELEASE_SUPPORT); nextPatchLevel)
+patch-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextPatchLevel)
 patch-release: .release tag release
 
-minor-release: VERSION = $(shell . $(RELEASE_SUPPORT); nextMinorLevel)
+minor-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextMinorLevel)
 minor-release: .release tag release
 
-major-release: VERSION = $(shell . $(RELEASE_SUPPORT); nextMajorLevel)
+major-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextMajorLevel)
 major-release: .release tag release
 
 tag: TAG=$(shell . $(RELEASE_SUPPORT); getTag $(VERSION))
