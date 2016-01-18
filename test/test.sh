@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 . ../.make-release-support
 
@@ -99,4 +100,4 @@ assertMakeRelease patch-release 0.0.1
 assertMakeRelease minor-release 0.1.0
 assertMakeRelease major-release 1.0.0
 
-rm -rf docker .git 
+rm -rf docker .git .release
