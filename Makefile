@@ -25,7 +25,8 @@ TAG=$(shell . $(RELEASE_SUPPORT); getTag)
 
 SHELL=/bin/bash
 
-.PHONY: pre-build docker-build post-build build release patch-release minor-release major-release tag check-status check-release showver
+.PHONY: pre-build docker-build post-build build release patch-release minor-release major-release tag check-status check-release showver \
+	push do-push post-push
 
 build: pre-build docker-build post-build
 
@@ -33,6 +34,9 @@ pre-build:
 
 
 post-build:
+
+
+post-push:
 
 
 docker-build: .release
@@ -45,21 +49,39 @@ docker-build: .release
 	@echo INFO: .release created
 	@cat .release
 
-release: check-status check-release build
+
+release: check-status check-release build push
+
+
+push: do-push post-push 
+
+do-push: 
 	docker push $(IMAGE):$(VERSION)
 	docker push $(IMAGE):latest
+
+snapshot: build push
 
 showver: .release
 	@. $(RELEASE_SUPPORT); getVersion
 
-patch-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextPatchLevel)
-patch-release: .release tag release
+tag-patch-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextPatchLevel)
+tag-patch-release: .release tag 
 
-minor-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextMinorLevel)
-minor-release: .release tag release
+tag-minor-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextMinorLevel)
+tag-minor-release: .release tag 
 
-major-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextMajorLevel)
-major-release: .release tag release
+tag-major-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextMajorLevel)
+tag-major-release: .release tag 
+
+patch-release: tag-patch-release release
+	@echo $(VERSION)
+
+minor-release: tag-minor-release release
+	@echo $(VERSION)
+
+major-release: tag-major-release release
+	@echo $(VERSION)
+
 
 tag: TAG=$(shell . $(RELEASE_SUPPORT); getTag $(VERSION))
 tag: check-status
@@ -68,6 +90,7 @@ tag: check-status
 	git add .release
 	git commit -m "bumped to version $(VERSION)" ;
 	git tag $(TAG) ;
+	@[ -n "$(shell git remote -v)" ] && git push --tags
 
 check-status:
 	@. $(RELEASE_SUPPORT) ; ! hasChanges || (echo "ERROR: there are still outstanding changes" >&2 && exit 1) ;
