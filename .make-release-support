@@ -24,7 +24,7 @@ function getRelease() {
 }
 
 function getBaseTag() {
-		sed -n -e "s/tag=\([^0-9]*\).*/\1/p" .release
+		sed -n -e "s/tag=\(.*\)$(getRelease)\$/\1/p" .release
 }
 
 function getTag() {
