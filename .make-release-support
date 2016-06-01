@@ -37,8 +37,8 @@ function getTag() {
 
 function setRelease() {
 	if [ -n "$1" ] ; then
-		sed -i.x -e "s/release=.*/release=$1/g" .release
 		sed -i.x -e "s/tag=.*/tag=$(getTag $1)/" .release
+		sed -i.x -e "s/release=.*/release=$1/g" .release
 		rm -f .release.x
 	else
 		echo "ERROR: missing release version parameter " >&2
@@ -48,7 +48,7 @@ function setRelease() {
 
 function tagExists() {
 	tag=${1:-$(getTag)}
-	test -n "$tag" && test -n "$(git tag | grep "$tag\$")"
+	test -n "$tag" && test -n "$(git tag | grep "^$tag\$")"
 }
 
 function differsFromRelease() {
