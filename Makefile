@@ -41,7 +41,15 @@ post-push:
 
 docker-build: .release
 	docker build -t $(IMAGE):$(VERSION) .
-	docker tag  -f $(IMAGE):$(VERSION) $(IMAGE):latest
+	@DOCKER_MAJOR=$(shell docker -v | sed -e 's/.*version //' -e 's/,.*//' | cut -d\. -f1) ; \
+	DOCKER_MINOR=$(shell docker -v | sed -e 's/.*version //' -e 's/,.*//' | cut -d\. -f2) ; \
+	if [ $$DOCKER_MAJOR -eq 1 ] && [ $$DOCKER_MINOR -lt 10 ] ; then \
+		echo docker tag -f $(IMAGE):$(VERSION) $(IMAGE):latest ;\
+		docker tag -f $(IMAGE):$(VERSION) $(IMAGE):latest ;\
+	else \
+		echo docker tag $(IMAGE):$(VERSION) $(IMAGE):latest ;\
+		docker tag $(IMAGE):$(VERSION) $(IMAGE):latest ; \
+	fi
 
 .release:
 	@echo "release=0.0.0" > .release
