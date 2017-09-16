@@ -40,7 +40,7 @@ NAME=awesome-image
 ```
 
 ## Building an image
-to build an image, just type make:
+to build an image, add a Dockerfile to your directory and type make:
 
 ```bash
 make
@@ -149,3 +149,6 @@ post-build:
 ```
 
 Now you can use the make build and release instructions to build these images.
+
+### Use for none Docker images 
+The Makefile can also be used for non Docker artifacts. Just leave and the Dockerfile and override the target docker-build

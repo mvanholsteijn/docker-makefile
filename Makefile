@@ -25,10 +25,10 @@ TAG=$(shell . $(RELEASE_SUPPORT); getTag)
 
 SHELL=/bin/bash
 
-.PHONY: pre-build docker-build post-build build release patch-release minor-release major-release tag check-status check-release showver \
+.PHONY: pre-build do-build post-build build release patch-release minor-release major-release tag check-status check-release showver \
 	push do-push post-push
 
-build: pre-build docker-build post-build
+build: pre-build do-build post-build
 
 pre-build:
 
@@ -39,16 +39,20 @@ post-build:
 post-push:
 
 
-docker-build: .release
-	docker build -t $(IMAGE):$(VERSION) .
-	@DOCKER_MAJOR=$(shell docker -v | sed -e 's/.*version //' -e 's/,.*//' | cut -d\. -f1) ; \
-	DOCKER_MINOR=$(shell docker -v | sed -e 's/.*version //' -e 's/,.*//' | cut -d\. -f2) ; \
-	if [ $$DOCKER_MAJOR -eq 1 ] && [ $$DOCKER_MINOR -lt 10 ] ; then \
-		echo docker tag -f $(IMAGE):$(VERSION) $(IMAGE):latest ;\
-		docker tag -f $(IMAGE):$(VERSION) $(IMAGE):latest ;\
+do-build: .release
+	@if [[ -f Dockerfile ]]; then docker build -t $(IMAGE):$(VERSION) . ; else echo "INFO: No Dockerfile found." >/dev/null ; fi
+	@if [[ -f Dockerfile ]]; then \
+		DOCKER_MAJOR=$(shell docker -v | sed -e 's/.*version //' -e 's/,.*//' | cut -d\. -f1) ; \
+		DOCKER_MINOR=$(shell docker -v | sed -e 's/.*version //' -e 's/,.*//' | cut -d\. -f2) ; \
+		if [ $$DOCKER_MAJOR -eq 1 ] && [ $$DOCKER_MINOR -lt 10 ] ; then \
+			echo docker tag -f $(IMAGE):$(VERSION) $(IMAGE):latest ;\
+			docker tag -f $(IMAGE):$(VERSION) $(IMAGE):latest ;\
+		else \
+			echo docker tag $(IMAGE):$(VERSION) $(IMAGE):latest ;\
+			docker tag $(IMAGE):$(VERSION) $(IMAGE):latest ; \
+		fi ; \
 	else \
-		echo docker tag $(IMAGE):$(VERSION) $(IMAGE):latest ;\
-		docker tag $(IMAGE):$(VERSION) $(IMAGE):latest ; \
+		echo 'No Dockerfile found.' > /dev/null ;\
 	fi
 
 .release:
@@ -64,8 +68,12 @@ release: check-status check-release build push
 push: do-push post-push 
 
 do-push: 
-	docker push $(IMAGE):$(VERSION)
-	docker push $(IMAGE):latest
+	@if  [[ -f Dockerfile ]]; then  \
+		docker push $(IMAGE):$(VERSION) ; \
+		docker push $(IMAGE):latest ; \
+	else \
+		echo > /dev/null ; \
+	fi
 
 snapshot: build push
 
@@ -98,7 +106,7 @@ tag: check-status
 	git add .release
 	git commit -m "bumped to version $(VERSION)" ;
 	git tag $(TAG) ;
-	@[ -n "$(shell git remote -v)" ] && git push --tags
+	@if [ -n "$(shell git remote -v)" ] ; then git push --tags ; fi
 
 check-status:
 	@. $(RELEASE_SUPPORT) ; ! hasChanges || (echo "ERROR: there are still outstanding changes" >&2 && exit 1) ;
