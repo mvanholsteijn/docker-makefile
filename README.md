@@ -151,5 +151,14 @@ post-build:
 
 Now you can use the make build and release instructions to build these images.
 
-### Use for none Docker images 
-The Makefile can also be used for non Docker artifacts. Just leave and the Dockerfile and override the target docker-build
+### pre tag command
+If you want add the current release to a source file, you can add the property `pre\_tag\_command` to the .release file. 
+this command is executed when the .release file is updated and before the tag is placed. In the command @@RELEASE@@ is
+replaced with the current release before it is executed. For example:
+
+```
+release=0.1.0
+tag=v0.1.0
+pre_tag_command=sed -i "" -e 's/^version=.*/version="@@RELEASE@@"/' setup.py
+```
+
