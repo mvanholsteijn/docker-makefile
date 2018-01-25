@@ -72,7 +72,7 @@ function getVersion() {
 	result=$(getRelease)
 
 	if differsFromRelease; then
-		result="$result-$(git rev-parse --short HEAD)"
+		result="$result-$(git log -n 1 --format=%h .)"
 	fi
 
 	if hasChanges ; then
