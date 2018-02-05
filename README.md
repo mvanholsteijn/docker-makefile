@@ -26,7 +26,7 @@ make showver		will show the current release tag based on the directory content.
 copy the Makefile and .make-release-support into your Docker git project:
 
 ```bash
-wget -o Makefile.mk https://raw.githubusercontent.com/mvanholsteijn/docker-makefile/master/Makefile
+wget -O Makefile.mk https://raw.githubusercontent.com/mvanholsteijn/docker-makefile/master/Makefile
 wget https://raw.githubusercontent.com/mvanholsteijn/docker-makefile/master/.make-release-support
 ```
 
