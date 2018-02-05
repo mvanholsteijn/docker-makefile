@@ -26,7 +26,7 @@ make showver		will show the current release tag based on the directory content.
 copy the Makefile and .make-release-support into your Docker git project:
 
 ```bash
-wget https://raw.githubusercontent.com/mvanholsteijn/docker-makefile/master/Makefile
+wget -o Makefile.mk https://raw.githubusercontent.com/mvanholsteijn/docker-makefile/master/Makefile
 wget https://raw.githubusercontent.com/mvanholsteijn/docker-makefile/master/.make-release-support
 ```
 
@@ -35,6 +35,8 @@ By default, the registry is set to docker.io and the user to the current user. T
 and set the variables REGISTRY_HOST, USERNAME and NAME.
 
 ```Makefile
+include Makefile.mk
+
 REGISTRY_HOST=myregistry.io
 USERNAME=mvanholsteijn
 NAME=awesome-image
