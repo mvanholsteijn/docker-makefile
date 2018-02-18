@@ -26,7 +26,7 @@ TAG=$(shell . $(RELEASE_SUPPORT); getTag)
 SHELL=/bin/bash
 
 .PHONY: pre-build docker-build post-build build release patch-release minor-release major-release tag check-status check-release showver \
-	push do-push post-push
+	push pre-push do-push post-push
 
 build: pre-build docker-build post-build
 
@@ -34,6 +34,9 @@ pre-build:
 
 
 post-build:
+
+
+pre-push:
 
 
 post-push:
@@ -61,7 +64,7 @@ docker-build: .release
 release: check-status check-release build push
 
 
-push: do-push post-push 
+push: pre-push do-push post-push 
 
 do-push: 
 	docker push $(IMAGE):$(VERSION)
