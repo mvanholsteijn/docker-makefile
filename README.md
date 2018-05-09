@@ -164,3 +164,16 @@ tag=v0.1.0
 pre_tag_command=sed -i "" -e 's/^version=.*/version="@@RELEASE@@"/' setup.py
 ```
 
+### Adding --build-arg
+If you want to add any command line options to the docker build command, specify the Make 
+variable `DOCKER_BUILD_ARGS`. 
+
+The following Makefile, specifies the build argument `TAG_VERSION` to be set to the current value.
+
+```
+include ../Makefile
+DOCKER_BUILD_ARGS=--build-arg TAG_VERSION=$(VERSION)
+```
+
+checkout the example [Make-](./build-arg-example/Makefile) and [Dockerfile](./build-arg-example/Dockerfile).
+

@@ -1,0 +1,3 @@
+FROM busybox
+ARG TAG_VERSION
+RUN echo ${TAG_VERSION}
