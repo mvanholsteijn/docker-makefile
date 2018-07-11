@@ -153,6 +153,21 @@ post-build:
 
 Now you can use the make build and release instructions to build these images.
 
+### Changing the build context and Dockerfile path and name
+
+Use the `DOCKER_BUILD_CONTEXT`variable to set the path to the context. Set `DOCKER_FILE_PATH` to change the path to the Dockerfile (file name included) you want to use. Using this in conjuction with the `pre-build` and `post-build` targets and a `.dockerignore` file allows you to modify the build context.
+
+```
+DOCKER_BUILD_CONTEXT=../..
+DOCKER_FILE_PATH=$(DOCKER_BUILD_CONTEXT)/docker/$(NAME)/some.Dockerfile
+
+pre-build: check-env-vars .dockerignore
+	cp .dockerignore $(DOCKER_BUILD_CONTEXT)
+
+post-build:
+	rm $(DOCKER_BUILD_CONTEXT)/.dockerignore
+```
+
 ### pre tag command
 If you want add the current release to a source file, you can add the property `pre\_tag\_command` to the .release file. 
 this command is executed when the .release file is updated and before the tag is placed. In the command @@RELEASE@@ is
