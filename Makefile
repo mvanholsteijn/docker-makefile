@@ -31,16 +31,12 @@ DOCKER_BUILD_CONTEXT=.
 DOCKER_FILE_PATH=Dockerfile
 ## -^- LOAD DEFAULT CONFIG -^- ##
 
-## -v- LOAD USER CONFIG -v- ##
-ifeq ($(path),)
-path := ./
-endif
-include $(path)config.mk
 
-#if [ -a myApp ] ; \
-#then \
-#     rm myApp ; \
-#fi;
+## -v- LOAD USER CONFIG -v- ##
+ifeq ($(config),)
+config := $(path)config.mk
+endif
+include $(config)
 ## -^- LOAD USER CONFIG -^- ##
 
 
