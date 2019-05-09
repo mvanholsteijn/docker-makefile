@@ -1,1 +1,5 @@
 config.mk
+single-example/.release
+multiple-example/image1/.release
+multiple-example/image2/.release
+build-arg-example/.release
