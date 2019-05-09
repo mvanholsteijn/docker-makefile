@@ -1,2 +1,3 @@
-include ../make/Makefile
+path=../
+include $(path)Makefile
 

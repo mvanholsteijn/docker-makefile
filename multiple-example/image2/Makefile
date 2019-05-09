@@ -1,4 +1,5 @@
-include ../make/Makefile
+path=../
+include $(path)Makefile
 
 pre-build:
 	@echo do some stuff before the docker build
