@@ -1,4 +1,4 @@
-path=../
+path=../../
 include $(path)Makefile
 
 pre-build:

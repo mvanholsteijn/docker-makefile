@@ -1,3 +1,3 @@
-path=../
+path=../../
 include $(path)Makefile
 
