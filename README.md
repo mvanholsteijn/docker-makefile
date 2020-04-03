@@ -1,3 +1,37 @@
+After I started using the source Makefile, replicating my changes between project repos with different configuration-type modifications quickly became tiresome. This fork serves to address the use case of wanting to re-use the Makefile, from a single source, across multiple projects. It should be noted that this is also intended for scenarios where you would use the `include` make directive to include this Makefile, henceforth referred to as the master Makefile, in a Makefile resided in a project subdirectory.
+
+### Writing a Makefile to call the master Makefile
+
+In order to call the master Makefile from a Makefile within a project subdirectory, it is required that the following be within said Makefile:
+
+```makefile
+path=./relative/path/to/master/Makefile/
+config=./relative/path/to/config.mk
+include $(path)Makefile
+```
+
+Optionally, you may exclude the `config` variable definition if you wish for your config file to be located in the same directory as the master Makefile.
+
+### Configuration via Makefile
+
+If you wish to over-ride variables set in your own config file for specific project subdirectories, you may declare the variables in the Makefile after the line `config=./relative/path/to/config.mk`.
+
+### Utilising config.mk
+
+`config.mk` is a Makefile-syntax file which is utilised by the master Makefile by using the `include` directive. The master Makefile is unable to find `config.mk` on its own, which as best I can tell is a limitation of make.
+
+To work around this limitation, the master Makefile will check if the $(config) variable has been set - this should be done in the Makefile which is used to call the master Makefile - and set it to $(path)config.mk if it has not.
+
+### Other master Makefile changes
+
+* Added 'help' target, to list available targets along with a brief description.
+* Added 'latest' target, for edge-cases where tagging the resulting image as latest, without version, is preferred.
+
+### Planned
+While it's not currently working consistently between environments (functions on CentOS 7 with make 3.8.2 at work, does not function on debian stretch with make 4.0.2 on Linode), I intend to add a no-cache target to make it easier to add that build flag to individual runs when needed.
+
+The original README (with updated targets) follows.
+------
 # Generic Docker Makefile
 When working with the Docker hub, two small things bothered me:
 
@@ -10,12 +44,14 @@ To resolve these to issues, I created a generic Makefile that allows you to buil
 
 The Makefile has the following targets:
 ```
+make help		shows this list of targets
 make patch-release	increments the patch release level, build and push to registry
 make minor-release	increments the minor release level, build and push to registry
 make major-release	increments the major release level, build and push to registry
 make release		build the current release and push the image to the registry
 make build		builds a new version of your Docker image and tags it
-make snapshot		build from the current (dirty) workspace and pushes the image to the registry 
+make latest		builds a new version of your Docker image and tags it as latest, omitting a version tag
+make snapshot		build from the current (dirty) workspace and pushes the image to the registry
 make check-status	will check whether there are outstanding changes
 make check-release	will check whether the current directory matches the tagged release in git.
 make showver		will show the current release tag based on the directory content.

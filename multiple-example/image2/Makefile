@@ -1,4 +1,9 @@
-include ../make/Makefile
+path=../make/
+config=../config.mk
+
+#-> INSERT PROJECT SUBDIRECTORY-SPECIFIC CONFIG CHANGES HERE
+
+include $(path)Makefile
 
 pre-build:
 	@echo do some stuff before the docker build
