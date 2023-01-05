@@ -177,7 +177,7 @@ backend/.release
 tag_on_changes_in=. ../common
 
 ```
-This will detect that a new release is required if there are changes in either backend or common with respect to the last tag. Checkout the directory [release-dependencies](./release-dependencies) for an example.
+check-status, check-release and showver will detect that a new version is required if there are changes in either backend or common with respect to the last release tag. Checkout the directory [release-dependencies](./release-dependencies) for an example.
 
 Note that there are a number of caveats:
 
