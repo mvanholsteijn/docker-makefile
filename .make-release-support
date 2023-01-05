@@ -1,5 +1,3 @@
-#!/bin/bash
-#
 #   Copyright 2015  Xebia Nederland B.V.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +13,21 @@
 #   limitations under the License.
 #
 function hasChanges() {
-	test -n "$(git status -s .)"
+	test -n "$(showChanges)"
+}
+
+function showChanges() {
+	git status -s -- $(getTagOnChangesIn)
+}
+
+function getTagOnChangesIn() {
+	result=$(awk -F= '/^tag_on_changes_in=/{print $2}' .release)
+	if egrep -q -e '^\.$' -e '^\./?[ 	]' -e '[ 	]\./?[ 	]' <<< "$result" ; then
+		echo "$result"
+	else
+		echo ". $result"
+	fi
+	return 0
 }
 
 function getRelease() {
@@ -63,9 +75,13 @@ function tagExists() {
 	test -n "$tag" && test -n "$(git tag | grep "^$tag\$")"
 }
 
+function showDiffFromRelease() {
+	git diff --compact-summary -r $tag -- $(getTagOnChangesIn)
+}
+
 function differsFromRelease() {
 	tag=$(getTag)
-	! tagExists $tag || test -n "$(git diff --shortstat -r $tag .)"
+	! tagExists $tag || test -n "$(showDiffFromRelease)"
 }
 
 function getVersion() {
