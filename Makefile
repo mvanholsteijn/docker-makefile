@@ -29,9 +29,9 @@ DOCKER_BUILD_CONTEXT=.
 DOCKER_FILE_PATH=Dockerfile
 
 .PHONY: pre-build docker-build post-build build release patch-release minor-release major-release tag check-status check-release showver \
-	push pre-push do-push post-push
+	push pre-push do-push post-push showimage
 
-build: pre-build docker-build post-build
+build: pre-build docker-build post-build	## builds a new version of your container image
 
 pre-build:
 
@@ -61,6 +61,7 @@ docker-build: .release
 .release:
 	@echo "release=0.0.0" > .release
 	@echo "tag=$(NAME)-0.0.0" >> .release
+	@echo "tag_on_changes_in=." >> .release
 	@echo INFO: .release created
 	@cat .release
 
@@ -74,27 +75,30 @@ do-push:
 	docker push $(IMAGE):$(VERSION)
 	docker push $(IMAGE):latest
 
-snapshot: build push
+snapshot: build push				## builds a new version of your container image, and pushes it to the registry
 
-showver: .release
+showver: .release				## shows the current release tag based on the workspace
 	@. $(RELEASE_SUPPORT); getVersion
 
+showimage: .release				## shows the container image name based on the workspace
+	@echo $(IMAGE):$(VERSION)
+
 tag-patch-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextPatchLevel)
-tag-patch-release: .release tag 
+tag-patch-release: .release tag 		## increments the patch release level and create the tag without build
 
 tag-minor-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextMinorLevel)
-tag-minor-release: .release tag 
+tag-minor-release: .release tag 		## increments the minor release level and create the tag without build
 
 tag-major-release: VERSION := $(shell . $(RELEASE_SUPPORT); nextMajorLevel)
-tag-major-release: .release tag 
+tag-major-release: .release tag 		## increments the major release level and create the tag without build
 
-patch-release: tag-patch-release release
+patch-release: tag-patch-release release	## increments the patch release level, build and push to registry
 	@echo $(VERSION)
 
-minor-release: tag-minor-release release
+minor-release: tag-minor-release release	## increments the minor release level, build and push to registry
 	@echo $(VERSION)
 
-major-release: tag-major-release release
+major-release: tag-major-release release	## increments the major release level, build and push to registry
 	@echo $(VERSION)
 
 
@@ -107,9 +111,13 @@ tag: check-status
 	git tag $(TAG) ;
 	@ if [ -n "$(shell git remote -v)" ] ; then git push --tags ; else echo 'no remote to push tags to' ; fi
 
-check-status:
-	@. $(RELEASE_SUPPORT) ; ! hasChanges || (echo "ERROR: there are still outstanding changes" >&2 && exit 1) ;
+check-status:			## checks whether there are outstanding changes
+	@. $(RELEASE_SUPPORT) ; ! hasChanges || (echo "ERROR: there are still outstanding changes" >&2 && showChanges >&2 && exit 1) ;
 
-check-release: .release
+check-release: .release		## checks whether the workspace matches the tagged release in git
 	@. $(RELEASE_SUPPORT) ; tagExists $(TAG) || (echo "ERROR: version not yet tagged in git. make [minor,major,patch]-release." >&2 && exit 1) ;
-	@. $(RELEASE_SUPPORT) ; ! differsFromRelease $(TAG) || (echo "ERROR: current directory differs from tagged $(TAG). make [minor,major,patch]-release." ; exit 1)
+	@. $(RELEASE_SUPPORT) ; ! differsFromRelease $(TAG) || (echo "ERROR: current directory differs from tagged $(TAG). make [minor,major,patch]-release." && showDiffFromRelease >&2 ; exit 1)
+
+
+help:           ## show this help.
+	@fgrep -h "##" $(MAKEFILE_LIST) | grep -v fgrep | sed -e 's/\([^:]*\):[^#]*##\(.*\)/printf '"'%-20s - %s\\\\n' '\1' '\2'"'/' |bash

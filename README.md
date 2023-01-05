@@ -10,15 +10,24 @@ To resolve these to issues, I created a generic Makefile that allows you to buil
 
 The Makefile has the following targets:
 ```
-make patch-release	increments the patch release level, build and push to registry
-make minor-release	increments the minor release level, build and push to registry
-make major-release	increments the major release level, build and push to registry
-make release		build the current release and push the image to the registry
-make build		builds a new version of your Docker image and tags it
-make snapshot		build from the current (dirty) workspace and pushes the image to the registry 
-make check-status	will check whether there are outstanding changes
-make check-release	will check whether the current directory matches the tagged release in git.
-make showver		will show the current release tag based on the directory content.
+build                -  builds a new version of your container image
+snapshot             -  builds a new version of your container image, and pushes it to the registry
+
+showver              -  shows the current release tag based on the workspace
+showimage            -  shows the container image name based on the workspace
+
+tag-patch-release    -  increments the patch release level and create the tag without build
+tag-minor-release    -  increments the minor release level and create the tag without build
+tag-major-release    -  increments the major release level and create the tag without build
+
+patch-release        -  increments the patch release level, build and push to registry
+minor-release        -  increments the minor release level, build and push to registry
+major-release        -  increments the major release level, build and push to registry
+
+check-status         -  checks whether there are outstanding changes
+check-release        -  checks whether the workspace matches the tagged release in git
+
+help                 -  show this help.
 ```
 
 
@@ -31,8 +40,8 @@ wget https://raw.githubusercontent.com/mvanholsteijn/docker-makefile/master/.mak
 ```
 
 ## Change registry, user or image name
-By default, the registry is set to docker.io and the user to the current user. To override this, edit the Makefile
-and set the variables REGISTRY_HOST, USERNAME and NAME.
+By default, the registry is set to docker.io and the user to the current user. To override this, include
+the Makefile as Makefile.mk and set the variables REGISTRY_HOST, USERNAME and NAME.
 
 ```Makefile
 include Makefile.mk
@@ -117,6 +126,65 @@ If you want to maintain multiple docker images in a single git repository, you c
 
 The Makefile in the image directories will include the generic Makefile. In this Makefile you can alter the names and tailor the build by adding pre and post build targets.  Checkout the directory (multiple-example) for an example.
 
+
+## Dependencies between images in a single git repository
+
+You can specify release dependencies between components in the repository using the variable `tag_on_changes_in` in the .release file.
+
+Let's say we have repository:
+
+
+
+```
+├── release-dependencies
+│   ├── ...
+│   ├── common
+│   │   ├── .release
+│   │   ├── Dockerfile
+│   │   └── Makefile
+│   ├── backend
+│   │   ├── .release
+│   │   ├── Dockerfile
+│   │   └── Makefile
+│   ├── frontend
+│   │   ├── .release
+│   │   ├── Dockerfile
+│   │   └── Makefile
+│   └── make
+│       ├── .make-release-support
+│       ├── Makefile
+```
+
+and the following dependencies between the releases:
+
+```
+  +--------------------------------+
+  |                                v
++----------+     +---------+     +--------+
+| frontend | --> | backend | --> | common |
++----------+     +---------+     +--------+
+```
+
+The respective .release files will have the following configuration:
+
+```
+frontend/.release
+=================
+tag_on_changes_in=. ../backend ../common
+
+backend/.release
+=================
+tag_on_changes_in=. ../common
+
+```
+check-status, check-release and showver will detect that a new version is required if there are changes in either backend or common with respect to the last release tag. Checkout the directory [release-dependencies](./release-dependencies) for an example.
+
+Note that there are a number of caveats:
+
+- the script does not recurse, so you must specify all directories it depends on
+- the script does not order the release tagging, so you must release the components in order
+- the script does not detect cycles in the dependencies
+- the paths must be relative and point to directories in the same git repository
 
 
 ### Create the generic make directory

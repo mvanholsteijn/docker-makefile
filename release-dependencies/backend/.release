@@ -1,0 +1,4 @@
+release=0.0.7
+tag=backend-0.0.7
+tag_on_changes_in=. ../common
+
