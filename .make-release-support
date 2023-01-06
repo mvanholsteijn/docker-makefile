@@ -88,7 +88,7 @@ function getVersion() {
 	result=$(getRelease)
 
 	if differsFromRelease; then
-		result="$result-$(git log -n 1 --format=%h .)"
+		result="$result-$(git log -n 1 --format=%h $(getTagOnChangesIn))"
 	fi
 
 	if hasChanges ; then
