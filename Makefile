@@ -24,7 +24,7 @@ IMAGE=$(REGISTRY_HOST)/$(USERNAME)/$(NAME)
 VERSION=$(shell . $(RELEASE_SUPPORT) ; getVersion)
 
 TAG=$(shell . $(RELEASE_SUPPORT); getTag)
-ALWAYS_TAG_WITH_LATEST=true
+TAG_WITH_LATEST=always
 
 SHELL=/bin/bash
 
@@ -49,16 +49,15 @@ post-push:
 
 
 
+docker-build: BASE_RELEASE=$(shell . $(RELEASE_SUPPORT) ; getRelease)
 docker-build: .release
 	docker build $(DOCKER_BUILD_ARGS) -t $(IMAGE):$(VERSION) $(DOCKER_BUILD_CONTEXT) -f $(DOCKER_FILE_PATH)
-	@if [[ $(ALWAYS_TAG_WITH_LATEST) == true ]]; then \
+	@if [[ $(TAG_WITH_LATEST) != never ]] && ([[ $(TAG_WITH_LATEST) == always ]] || [[ $(BASE_RELEASE) == $(VERSION) ]]); then \
 		echo docker tag $(IMAGE):$(VERSION) $(IMAGE):latest >&2; \
 		docker tag $(IMAGE):$(VERSION) $(IMAGE):latest; \
 	else \
-		if [[ -n $$(docker images -q $(IMAGE):latest) ]]; then \
-			echo docker rmi --force --no-prune $(IMAGE):latest >&2; \
-			docker rmi --force --no-prune $(IMAGE):latest; \
-		fi \
+		echo docker rmi --force --no-prune $(IMAGE):latest >&2; \
+		docker rmi --force --no-prune $(IMAGE):latest 2>/dev/null; \
 	fi
 
 .release:
@@ -77,8 +76,7 @@ push: pre-push do-push post-push
 do-push: BASE_RELEASE=$(shell . $(RELEASE_SUPPORT) ; getRelease)
 do-push: 
 	docker push $(IMAGE):$(VERSION)
-	@if [[ $(ALWAYS_TAG_WITH_LATEST) == true ]] || [[ $(BASE_RELEASE) == $(VERSION) ]]; then \
-		docker tag $(IMAGE):$(VERSION) $(IMAGE):latest; \
+	@if [[ $(TAG_WITH_LATEST) != never ]] && ([[ $(TAG_WITH_LATEST) == always ]] || [[ $(BASE_RELEASE) == $(VERSION) ]]); then \
 		echo docker push $(IMAGE):latest >&2; \
 		docker push $(IMAGE):latest; \
 	fi

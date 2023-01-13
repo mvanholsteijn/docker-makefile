@@ -260,3 +260,14 @@ DOCKER_BUILD_ARGS=--build-arg TAG_VERSION=$(VERSION)
 
 checkout the example [Make-](./build-arg-example/Makefile) and [Dockerfile](./build-arg-example/Dockerfile).
 
+### control the :latest tag
+You can now control the generation of the latest tag with the variable TAG_WITH_LATEST.
+
+| value | action | removes :latest tag? |
+|-------+--------+---------------------|
+| always | tag all images with `:latest` | no |
+| on-release | only tag clean images tag (eg. x.y.z) with `:latest` | yes, for no-release builds |
+| never | never tag with `:latest` | yes |
+
+Caveats:
+- when you build a image from an earlier release, it will also be tagged `latest` with on-release and always.
