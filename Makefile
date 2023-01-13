@@ -1,5 +1,5 @@
 #
-#   Copyright 2015  Xebia Nederland B.V.
+#   Copyright 2015-2023  Xebia Nederland B.V.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -20,8 +20,11 @@ NAME=$(shell basename $(CURDIR))
 RELEASE_SUPPORT := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))/.make-release-support
 IMAGE=$(REGISTRY_HOST)/$(USERNAME)/$(NAME)
 
+
 VERSION=$(shell . $(RELEASE_SUPPORT) ; getVersion)
+
 TAG=$(shell . $(RELEASE_SUPPORT); getTag)
+ALWAYS_TAG_WITH_LATEST=true
 
 SHELL=/bin/bash
 
@@ -48,7 +51,15 @@ post-push:
 
 docker-build: .release
 	docker build $(DOCKER_BUILD_ARGS) -t $(IMAGE):$(VERSION) $(DOCKER_BUILD_CONTEXT) -f $(DOCKER_FILE_PATH)
-	docker tag $(IMAGE):$(VERSION) $(IMAGE):latest
+	@if [[ $(ALWAYS_TAG_WITH_LATEST) == true ]]; then \
+		echo docker tag $(IMAGE):$(VERSION) $(IMAGE):latest >&2; \
+		docker tag $(IMAGE):$(VERSION) $(IMAGE):latest; \
+	else \
+		if [[ -n $$(docker images -q $(IMAGE):latest) ]]; then \
+			echo docker rmi --force --no-prune $(IMAGE):latest >&2; \
+			docker rmi --force --no-prune $(IMAGE):latest; \
+		fi \
+	fi
 
 .release:
 	@echo "release=0.0.0" > .release
@@ -63,9 +74,14 @@ release: check-status check-release build push
 
 push: pre-push do-push post-push 
 
+do-push: BASE_RELEASE=$(shell . $(RELEASE_SUPPORT) ; getRelease)
 do-push: 
 	docker push $(IMAGE):$(VERSION)
-	docker push $(IMAGE):latest
+	@if [[ $(ALWAYS_TAG_WITH_LATEST) == true ]] || [[ $(BASE_RELEASE) == $(VERSION) ]]; then \
+		docker tag $(IMAGE):$(VERSION) $(IMAGE):latest; \
+		echo docker push $(IMAGE):latest >&2; \
+		docker push $(IMAGE):latest; \
+	fi
 
 snapshot: build push				## builds a new version of your container image, and pushes it to the registry
 
