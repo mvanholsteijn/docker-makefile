@@ -20,7 +20,7 @@ If you wish to over-ride variables set in your own config file for specific proj
 
 `config.mk` is a Makefile-syntax file which is utilised by the master Makefile by using the `include` directive. The master Makefile is unable to find `config.mk` on its own, which as best I can tell is a limitation of make.
 
-To work around this limitation, the master Makefile will check if the $(config) variable has been set - this should be done in the Makefile which is used to call the master Makefile - and set it to $(path)config.mk if it has not.
+To work around this limitation, the master Makefile will check if the `$(config)` variable has been set - this should be done in the Makefile which is used to call the master Makefile - and set it to `$(path)config.mk` if it has not.
 
 ### Other master Makefile changes
 
