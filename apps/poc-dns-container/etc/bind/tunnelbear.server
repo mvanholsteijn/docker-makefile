@@ -1,0 +1,20 @@
+;
+; Zone file for tunnelbear.server
+;
+; The full zone file
+;
+$TTL 3D
+@       IN      SOA     ns.tunnelbear.server. hostmaster.tunnelbear.server. (
+                        199802151       ; serial, todays date + todays serial #
+                        8H              ; refresh, seconds
+                        2H              ; retry, seconds
+                        4W              ; expire, seconds
+                        1D )            ; minimum, seconds
+;
+                NS      ns              ; Inet Address of name server
+
+@		A	172.18.10.1
+localhost       A       127.0.0.1
+ns		A	172.18.10.1
+www             A       172.18.10.1
+

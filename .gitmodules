@@ -1,0 +1,3 @@
+[submodule "wireguard-key-managment-app"]
+	path = apps/vpn-controller
+	url = https://github.com/TunnelBear/wireguard-key-managment-app.git
