@@ -1,8 +1,8 @@
 FROM nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
-RUN apt install gunicorn
-RUN apt install php5-fpm
+# RUN apt-get install -y  gunicorn
+# RUN apt-get install -y  php5-fpm
 
-ENTRYPOINT php5 fpm nginx
+# ENTRYPOINT php5 fpm nginx
 EXPOSE 443

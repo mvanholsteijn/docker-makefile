@@ -52,13 +52,13 @@ post-push:
 
 docker-build: BASE_RELEASE=$(shell . $(RELEASE_SUPPORT) ; getRelease)
 docker-build: .release
-	docker build $(DOCKER_BUILD_ARGS) -t $(IMAGE):$(VERSION) $(DOCKER_BUILD_CONTEXT) -f $(DOCKER_FILE_PATH)
+	sudo docker build $(DOCKER_BUILD_ARGS) -t $(IMAGE):$(VERSION) $(DOCKER_BUILD_CONTEXT) -f $(DOCKER_FILE_PATH)
 	@if [[ $(TAG_WITH_LATEST) != never ]] && ([[ $(TAG_WITH_LATEST) == always ]] || [[ $(BASE_RELEASE) == $(VERSION) ]]); then \
 		echo docker tag $(IMAGE):$(VERSION) $(IMAGE):latest >&2; \
-		docker tag $(IMAGE):$(VERSION) $(IMAGE):latest; \
+		sudo docker tag $(IMAGE):$(VERSION) $(IMAGE):latest; \
 	else \
 		echo docker rmi --force --no-prune $(IMAGE):latest >&2; \
-		docker rmi --force --no-prune $(IMAGE):latest 2>/dev/null; \
+		sudo docker rmi --force --no-prune $(IMAGE):latest 2>/dev/null; \
 	fi
 
 .release:
@@ -76,10 +76,10 @@ push: pre-push do-push post-push
 
 do-push: BASE_RELEASE=$(shell . $(RELEASE_SUPPORT) ; getRelease)
 do-push: 
-	docker push $(IMAGE):$(VERSION)
+	sudo docker push $(IMAGE):$(VERSION)
 	@if [[ $(TAG_WITH_LATEST) != never ]] && ([[ $(TAG_WITH_LATEST) == always ]] || [[ $(BASE_RELEASE) == $(VERSION) ]]); then \
 		echo docker push $(IMAGE):latest >&2; \
-		docker push $(IMAGE):latest; \
+		sudo docker push $(IMAGE):latest; \
 	fi
 
 snapshot: build push				## builds a new version of your container image, and pushes it to the registry
