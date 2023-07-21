@@ -1,16 +1,20 @@
-FROM python:3
+FROM ubuntu:jammy
 
-# RUN apt-get update
-# RUN apt-get install python3.6
-# RUN apt-get install pip
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python-is-python3
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip
 RUN pip install Jinja2
-# RUN apt-get install -y nginx
-# RUN apt-get install -y  gunicorn
-# RUN apt-get install -y  php5-fpm
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y gunicorn
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y apache2 libapache2-mod-fcgid
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y php-fpm
 
 ARG NAME
-
 WORKDIR /workdir
 
 COPY ${NAME}/config.py /workdir

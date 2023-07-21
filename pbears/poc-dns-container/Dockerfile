@@ -1,13 +1,15 @@
-FROM python:3
+FROM ubuntu:jammy
 
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y bind9
 
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python-is-python3
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip
 RUN pip install Jinja2
 
-ARG NAME
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y bind9
 
+ARG NAME
 WORKDIR /workdir
 
 COPY ${NAME}/config.py /workdir
