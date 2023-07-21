@@ -1,7 +1,8 @@
-FROM ubuntu:jammy
+FROM ubuntu/bind9:9.18-22.04_beta
+# FROM ubuntu:jammy
 
 RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+# RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python-is-python3
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip
@@ -25,5 +26,5 @@ ADD repos/opscode/playbooks/roles/bind/files/etc/bind/tunnelbear.server /etc/bin
 ADD repos/opscode/playbooks/roles/bind/files/etc/bind/mcafee.lazerpenguin.com /etc/bind/mcafee.lazerpenguin.com
 
 # lock and load baby
-ENTRYPOINT /usr/sbin/named -f -u bind
+# ENTRYPOINT /usr/sbin/named -f -u bind
 EXPOSE 53

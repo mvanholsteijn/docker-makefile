@@ -5,8 +5,8 @@ import os
 from jinja2 import Environment, FileSystemLoader
 
 container_configs = { 
-        'zone "tunnelbear.server"': [ "tunnelbear.server" ],
-        'zone "mcafee.lazerpenguin.com"': [ "mcafee.lazerpenguin.com" ]
+        'tunnelbear.server': [ "tunnelbear.server" ],
+        'mcafee.lazerpenguin.com': [ "mcafee.lazerpenguin.com" ]
 }
 
 
