@@ -5,30 +5,10 @@ import os
 from jinja2 import Environment, FileSystemLoader
 
 container_configs = { 
-	'nginx_user':	'www-data',
-	'nginx_group':	'www-data',
-
-	'nginx_worker_processes':4,
-
-	'nginx_pid_file': '/var/run/nginx.pid',
-	'nginx_worker_rlimit_nofile': 1024,
-
-	'nginx_events_params': ['worker_connections 512'],
-
-	'nginx_http_params': 
-	[
-		'sendfile "on"',
-        	'tcp_nopush "on"',
-        	'tcp_nodelay "on"',
-        	'keepalive_timeout 65',
-        	'access_log "/var/log/nginx/access.log"',
-        	'error_log "/var/log/nginx/error.log"',
-        	'server_tokens "off"', 
-        	'types_hash_max_size 2048'
-	],
-
-	'nginx_conf_dir': '/etc/nginx'
+        'zone "tunnelbear.server"': [ "tunnelbear.server" ],
+        'zone "mcafee.lazerpenguin.com"': [ "mcafee.lazerpenguin.com" ]
 }
+
 
 if __name__ == "__main__":
     # Create an ArgumentParser object
@@ -48,7 +28,7 @@ if __name__ == "__main__":
     template = env.get_template(args.j2_file)
 
     # Render the template with the variables
-    rendered_content = template.render(container_configs)
+    rendered_content = template.render(zones=container_configs)
 
     # Write the resolved content to an output file
     with open(args.out_file, "w") as output_file:
