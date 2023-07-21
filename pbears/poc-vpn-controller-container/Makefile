@@ -1,2 +1,2 @@
-include ../make/Makefile
+include $(PBDIR)/../Makefile
 

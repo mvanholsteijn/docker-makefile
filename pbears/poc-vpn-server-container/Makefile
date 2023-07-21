@@ -1,4 +1,4 @@
-include ../make/Makefile
+include $(PBDIR)/../Makefile
 
 pre-build:
 	@echo do some stuff before the docker build
