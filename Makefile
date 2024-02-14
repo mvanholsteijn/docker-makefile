@@ -1,5 +1,5 @@
 #
-#   Copyright 2015-2023  Xebia Nederland B.V.
+#   Copyright 2015-2024  Xebia Nederland B.V.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ IMAGE=$(REGISTRY_HOST)/$(USERNAME)/$(NAME)
 
 
 VERSION=$(shell . $(RELEASE_SUPPORT) ; getVersion)
+BASE_RELEASE=$(shell . $(RELEASE_SUPPORT) ; getRelease)
 
 TAG=$(shell . $(RELEASE_SUPPORT); getTag)
 TAG_WITH_LATEST=always
@@ -48,8 +49,6 @@ pre-push:
 post-push:
 
 
-
-docker-build: BASE_RELEASE=$(shell . $(RELEASE_SUPPORT) ; getRelease)
 docker-build: .release
 	docker build $(DOCKER_BUILD_ARGS) -t $(IMAGE):$(VERSION) $(DOCKER_BUILD_CONTEXT) -f $(DOCKER_FILE_PATH)
 	@if [[ $(TAG_WITH_LATEST) != never ]] && ([[ $(TAG_WITH_LATEST) == always ]] || [[ $(BASE_RELEASE) == $(VERSION) ]]); then \
@@ -73,7 +72,6 @@ release: check-status check-release build push
 
 push: pre-push do-push post-push 
 
-do-push: BASE_RELEASE=$(shell . $(RELEASE_SUPPORT) ; getRelease)
 do-push: 
 	docker push $(IMAGE):$(VERSION)
 	@if [[ $(TAG_WITH_LATEST) != never ]] && ([[ $(TAG_WITH_LATEST) == always ]] || [[ $(BASE_RELEASE) == $(VERSION) ]]); then \
