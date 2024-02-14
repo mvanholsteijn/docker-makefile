@@ -70,9 +70,9 @@ docker-build: .release
 release: check-status check-release build push
 
 
-push: pre-push do-push post-push 
+push: pre-push do-push post-push
 
-do-push: 
+do-push:
 	docker push $(IMAGE):$(VERSION)
 	@if [[ $(TAG_WITH_LATEST) != never ]] && ([[ $(TAG_WITH_LATEST) == always ]] || [[ $(BASE_RELEASE) == $(VERSION) ]]); then \
 		echo docker push $(IMAGE):latest >&2; \
